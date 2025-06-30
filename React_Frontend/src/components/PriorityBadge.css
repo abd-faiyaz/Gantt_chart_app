@@ -1,0 +1,105 @@
+/* Priority Badge Styles - Jira-inspired */
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  min-width: 70px;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.priority-icon {
+  font-size: 8px;
+  margin-right: 2px;
+}
+
+/* Highest Priority - Deep Red */
+.priority-highest {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.priority-highest .priority-icon {
+  color: #dc2626;
+}
+
+/* High Priority - Red */
+.priority-high {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.priority-high .priority-icon {
+  color: #ef4444;
+}
+
+/* Medium Priority - Orange */
+.priority-medium {
+  background-color: #fff7ed;
+  color: #ea580c;
+  border: 1px solid #fdba74;
+}
+
+.priority-medium .priority-icon {
+  color: #f97316;
+}
+
+/* Low Priority - Blue */
+.priority-low {
+  background-color: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #93c5fd;
+}
+
+.priority-low .priority-icon {
+  color: #3b82f6;
+}
+
+/* Lowest Priority - Green */
+.priority-lowest {
+  background-color: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #86efac;
+}
+
+.priority-lowest .priority-icon {
+  color: #22c55e;
+}
+
+/* Default Priority - Gray */
+.priority-default {
+  background-color: #f9fafb;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+.priority-default .priority-icon {
+  color: #9ca3af;
+}
+
+/* Unknown Priority */
+.priority-unknown {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  border: 1px solid #d1d5db;
+  font-style: italic;
+}
+
+.priority-unknown .priority-icon {
+  color: #d1d5db;
+}
+
+/* Hover effect */
+.priority-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

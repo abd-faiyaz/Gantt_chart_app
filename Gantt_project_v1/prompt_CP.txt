@@ -1,0 +1,98 @@
+I want you to implement  a springboot backend which can do CRUD operations on a postgres database.
+It needs to connect to react frontend using CORS, use JWT for authentication
+I already created a springboot project with the following dependencies:
+// - Spring Web
+// - Spring Data JPA
+// - PostgreSQL Driver
+// - lombok
+// - Spring devtools
+
+i am on ubuntu 25.04 and have installed postgres and created a database named "gantt_project_db" under the
+default user "postgres" with password "1234". I will be working on intellij idea ultimate edition.
+Now ask me any specific questions you need to proceed with the implementation. Then give me
+a detailed step-by-step guide that i should follow to implement the backend. Dont give any code yet.
+
+These are the answers to your questions:
+1) I want to do CRUD operations on the "tasks" table only, so I dont need
+any users table or others for now, also no login register needed for now.
+Look at the react project in this attached repo, i will be implementing the backend for those
+2 pages only.
+For reference these are the fields in the "tasks" table of postgres database gantt_project_db:
+                                       Table "public.tasks"
+      Column       |           Type           | Collation | Nullable |           Default
+-------------------+--------------------------+-----------+----------+-----------------------------
+ task_id           | uuid                     |           | not null | gen_random_uuid()
+ type              | character varying(50)    |           | not null |
+ title             | character varying(255)   |           | not null |
+ description       | text                     |           |          |
+ epic_id           | uuid                     |           |          |
+ sprint_id         | uuid                     |           |          |
+ start_date        | date                     |           | not null |
+ due_date          | date                     |           |          |
+ original_estimate | interval                 |           |          |
+ status            | character varying(50)    |           | not null | 'To Do'::character varying
+ assignee_id       | uuid                     |           |          |
+ priority          | character varying(50)    |           | not null | 'Medium'::character varying
+ labels            | text[]                   |           |          |
+ parent_task_id    | uuid                     |           |          |
+ created_at        | timestamp with time zone |           |          | now()
+ updated_at        | timestamp with time zone |           |          | now()
+Indexes:
+    "tasks_pkey" PRIMARY KEY, btree (task_id)
+Check constraints:
+    "chk_task_dates" CHECK (due_date IS NULL OR due_date >= start_date)
+    "chk_task_priority" CHECK (priority::text = ANY (ARRAY['High'::character varying, 'Medium'::character varying, 'Low'::character varying]::text[]))
+    "chk_task_status" CHECK (status::text = ANY (ARRAY['To Do'::character varying, 'In Progress'::character varying, 'Done'::character varying]::text[]))
+    "chk_task_type" CHECK (type::text = ANY (ARRAY['task'::character varying, 'story'::character varying, 'sub_task'::character varying]::text[]))
+
+2) Dont go beyond this table for now
+3) rest endpoints should be:
+   - GET /tasks
+   - GET /tasks/{id}
+   - POST /tasks
+   - PUT /tasks/{id}
+   - DELETE /tasks/{id}
+ Now look at the react project in the attached repo,
+ and based on the fields in the "tasks" table and the endpoints mentioned above, tell me where those
+ rest endpoints will need to be added in the react project.
+ 4) use CORS, react at port 3000
+ 5) dont use any jwt authentication for now, just simple CRUD operations and data
+ exchange between react and springboot
+
+ Now give me a detailed step-by-step guide that i should follow to implement the backend. Dont give any code yet.
+/////////////////////////////////////////////////////////////
+
+When i create a new task then database is not updated. Also when I
+go to view tasks then existing tasks are shown except the new task
+Analyze and fix it
+
+
+
+
+
+ //////////////////////////////////////////////////////////
+ When i go to localhost:8080/tasks, I get the JSON in this format:
+[
+  {
+    "type": "story",
+    "title": "User Registration System",
+    "description": "Implement complete user registration with email verification and validation",
+    "epicId": null,
+    "sprintId": null,
+    "startDate": "2024-01-15",
+    "dueDate": "2024-02-15",
+    "originalEstimate": "PT40H",
+    "status": "In Progress",
+    "assigneeId": null,
+    "priority": "High",
+    "labels": [
+      "authentication",
+      "backend"
+    ],
+    "parentTaskId": null,
+    "createdAt": "2025-06-22T04:53:06.347068Z",
+    "updatedAt": "2025-06-22T04:53:06.347068Z",
+    "id": "7e2a218f-1b3f-46d3-bac9-a0dfa3492cde"
+  },....]
+  Now when i go to view-tasks in the frontend, the description, assignee and some other elements 
+  are not showing like this image. Analyze the and fix it

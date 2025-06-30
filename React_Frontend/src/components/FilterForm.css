@@ -1,0 +1,331 @@
+.filter-panel {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    padding: 0 0 18px 0;
+    max-width: 340px;
+    min-width: 300px;
+    margin: 24px auto;
+    font-family: 'Inter', sans-serif;
+    z-index: 10001; /* Ensure it appears above other content */
+}
+
+.filter-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px 0 20px;
+}
+
+.filter-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #888;
+    letter-spacing: 1px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.filter-save-btn,
+.filter-clear-btn {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0 4px;
+    transition: color 0.2s;
+}
+
+.filter-save-btn:hover,
+.filter-clear-btn:hover {
+    color: #1976d2;
+}
+
+.filter-panel-body {
+    padding: 0 20px;
+    overflow: visible; /* Ensure content is visible */
+    margin-top: 20px;
+}
+
+.filter-team-row {
+    margin: 18px 0 12px 0;
+}
+
+.filter-team-badge {
+    background: #f4f5f7;
+    color: #888;
+    font-size: 13px;
+    border-radius: 8px;
+    padding: 4px 12px;
+    display: inline-block;
+}
+
+.filter-section {
+    margin-bottom: 18px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.filter-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.filter-date-row {
+    display: flex;
+    flex-wrap: wrap;         /* Allow wrapping on small screens */
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-date-field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 110px;
+    flex: 1 1 110px;         /* Allow shrinking and growing */
+}
+
+.filter-date-label {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 2px;
+}
+
+.filter-date-input {
+    padding: 6px 10px;
+    border: 1px solid #cfd8dc;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #f7fafd;
+    transition: border 0.2s;
+    outline: none;
+    min-width: 0;            /* Allow shrinking */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.filter-date-input:focus {
+    border: 1.5px solid #1976d2;
+    background: #fff;
+}
+
+.filter-date-arrow {
+    font-size: 18px;
+    color: #bbb;
+    margin-top: 18px;
+}
+
+.filter-worktype-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.worktype-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #f4f5f7;
+    border-radius: 16px;
+    padding: 4px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: border 0.2s, background 0.2s;
+    user-select: none;
+}
+
+.worktype-btn input[type="checkbox"] {
+    accent-color: #1976d2;
+    margin-right: 2px;
+}
+
+.worktype-btn.bug span { color: #e74c3c; }
+.worktype-btn.epic span { color: #8e44ad; }
+.worktype-btn.story span { color: #6abf69; }
+.worktype-btn.subtask span { color: #1976d2; }
+.worktype-btn.task span { color: #1976d2; }
+
+.worktype-btn:hover,
+.worktype-btn input[type="checkbox"]:checked + span {
+    border: 1.5px solid #1976d2;
+    background: #e3f0fd;
+}
+
+.filter-storypoint-row {
+    margin-top: 6px;
+}
+
+.storypoint-btn {
+    background: #f4f5f7;
+    color: #888;
+    font-size: 14px;
+    border-radius: 16px;
+    padding: 4px 16px;
+    display: inline-block;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: border 0.2s, background 0.2s;
+}
+
+.storypoint-btn:hover {
+    border: 1.5px solid #1976d2;
+    background: #e3f0fd;
+}
+
+.filter-form-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 24px 32px 20px 32px;
+    margin-bottom: 24px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.filter-form-header h2 {
+    margin: 0 0 12px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1976d2;
+    letter-spacing: 0.5px;
+}
+
+.line {
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 18px;
+}
+
+.filter-form-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 12px;
+}
+
+.filter-date-container, .filter-other-container {
+    display: flex;
+    gap: 24px;
+    flex: 1 1 300px;
+}
+
+.filter-date-container .date,
+.filter-other-container .assignee,
+.filter-other-container .status {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 150px;
+}
+
+.title label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.box {
+    padding: 8px 10px;
+    border: 1px solid #cfd8dc;
+    border-radius: 4px;
+    font-size: 15px;
+    background: #f7fafd;
+    transition: border 0.2s;
+    outline: none;
+}
+
+.box:focus {
+    border: 1.5px solid #1976d2;
+    background: #fff;
+}
+
+.filter-form-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.button {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.button:hover {
+    background: #1256a3;
+}
+
+.filter-assignee-input {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 6px 10px;
+    border: 1px solid #cfd8dc;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #f7fafd;
+    transition: border 0.2s;
+    outline: none;
+    margin-top: 6px;
+    margin-bottom: 2px;
+}
+
+.filter-assignee-input:focus {
+    border: 1.5px solid #1976d2;
+    background: #fff;
+}
+
+.filter-select-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background: #fff;
+    margin-top: 6px;
+}
+
+.filter-select-input:focus {
+    outline: none;
+    border-color: #1976d2;
+    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
+}
+
+@media (max-width: 420px) {
+    .filter-panel {
+        min-width: 0;
+        max-width: 98vw;
+        padding: 0 2vw 18px 2vw;
+    }
+    .filter-panel-body {
+        padding: 0 4vw;
+    }
+    .filter-section {
+        width: 100%;
+    }
+    .filter-assignee-input {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
+}

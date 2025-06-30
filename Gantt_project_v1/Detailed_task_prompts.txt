@@ -1,0 +1,79 @@
+In the create tasks page, I want to perform a conditional checking for end 
+date based on holidays. The holidays need to be marked on the dropdown calender,
+and after the user inputs the start date and estimate days, the end date should 
+be calculated in the backend and shown in the frontend like this: the box for 
+end date input should have the calculated end date greyed out, and the user can
+also give an end date, but that date should be equal to or after the calculated 
+date
+Let me give an example, suppose the start date is 9 may 2025, estimate days = 10
+so calculated end date = 19 may 2025.So in the end date input box, a suggestion
+of 19 may 2025 should be shown greyed out, and the user can select the end date 
+but it has to be 19 may or after that.
+
+Now guide me step by step what needs to be done,
+ what new api endpoints need to be created in the frontend and backend, and what files will be modified.
+ Dont give codes yet
+==============================================================================
+ Convert the estimate hrs to estimate days in these places:
+ 1) in the frontend
+ 2) in the database 
+ This is the sql code which i used to create the tasks table and others 
+ (attach complete_setup_sql.sql file). And this is the sql code i used to 
+ insert dummy data into the table (src/main/resources/insert_codes_gantt_db/tasks_insertions.sql)
+Tell me where else modifications will be needed, explain point by point and dont give me code yet
+ Now modify their codes and tell me if changes are needed in other tables
+ =============================================================================
+ ///////////////////////////////////////////////////////////////////////////////
+
+ Currently there is create tasks page and view tasks page, and in the view tasks 
+ page all the tasks are listed. I want to make a hierarchy when creating and listing the tasks.
+The hierarchy is like this: There will be epics as the topmost layer, we can add story and task under each epic, and we can add subtasks under each story or task. Like this:
+
+Epic 1
+  -Story 1
+      -SubTask 1
+      -SubTask 2
+  -Task 1
+      -Subtask 1
+      -Subtask 2
+Epic 2
+      -Story 1
+      -SubTask 1
+      -SubTask 2
+  -Task 1
+      -Subtask 1
+      -Subtask 2
+like this. Now in order to acheive this, I need the following changes to be done.
+1) in the View Task Page the display layout should be changed in these ways:
+initially in the table all the epics will be listed(the way the tasks are shown now)
+When we click on any epic, it will expand like dropdown and all the story or tasks under that epic will 
+be shown
+ 
+When we click on any story or subtask, then that will expand in the same way and
+show the subtasks under it.
+Beside each task or story there should be a dropdown indicator button, using which we can expand or collapse
+The layout will be similar to the one shown in this attached image, which is the list view in jira 
+
+
+
+2) In the home page, keep the  "View tasks" button,  I want to make a "Create Task" and a  "Create epic" button. So a new form page for creating epics will be needed, which will have some modifications in the form page for creating tasks(taskform.js). Another form page will be for creating subtasks.
+3) in the form for creating epics, make these changes to taskform:
+- eliminate the type box and sprint box
+- Instead of "Task Name/Title" the box label should be "Epic Name/Title"
+- eliminate the "parent task" box, instead give a "Linked Epic Name" box in the same position where there'll be a dropdown menu.
+In the dropdown menu all the previously created epics will be listed
+4) In the new task form, make these new changes:
+- in the "Type" box's dropdown menu, show 2 options(Task and Story)
+-Eliminate the "Parent task" box
+-In case of the "Linked Epic name" box:
+	1) if we are creating the task from "Create Task" button in the homepage
+	then a dropdown window will be shown from which the user has to select 
+	an existing epic (under which the task will be made)
+	2) if we are creating the task from +(add task) button under an epic's task listings
+	then put the name of that epic fixed inside the box, user cant change it then
+5) Subtasks can be created under tasks and stories, by clicking the + button in actions in view page
+///////////////////////////////////////////////////////////////////////////////
+
+
+
+

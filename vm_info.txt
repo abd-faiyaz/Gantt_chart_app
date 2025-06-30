@@ -1,0 +1,18 @@
+VM name: gantt-vm
+VM resource group: gantt-project-rg
+Region : Central India
+zone 1
+standard security
+ubuntu server 24.04 LTS image 
+B2ts_v2 2vcpus, 1 GiB memory, $8.18/month
+
+Administrator account: abd-faiyaz-vm
+Generate new key pair
+SSH key type: RSA SSH format
+key pair name: gantt-vm_key
+
+
+public ip address: gantt-vm-ip
+virtual network: gantt-vm-vnet
+
+public ip address: 98.70.40.14

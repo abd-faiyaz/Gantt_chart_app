@@ -1,0 +1,71 @@
+/* Status Badge Styles - Jira-inspired */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  min-width: 60px;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+/* To Do Status - Blue Gray */
+.status-todo {
+  background-color: #ddd6fe;
+  color: #6b46c1;
+  border: 1px solid #c4b5fd;
+}
+
+/* In Progress Status - Blue */
+.status-inprogress {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #93c5fd;
+}
+
+/* Done Status - Green */
+.status-done {
+  background-color: #dcfce7;
+  color: #16a34a;
+  border: 1px solid #86efac;
+}
+
+/* Blocked Status - Red */
+.status-blocked {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+}
+
+/* Testing/Review Status - Orange */
+.status-review {
+  background-color: #fed7aa;
+  color: #ea580c;
+  border: 1px solid #fdba74;
+}
+
+/* Default Status - Gray */
+.status-default {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+}
+
+/* Unknown Status */
+.status-unknown {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  border: 1px solid #d1d5db;
+  font-style: italic;
+}
+
+/* Hover effect */
+.status-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

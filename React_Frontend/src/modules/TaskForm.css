@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ===== BASE STYLES (UNCHANGED FROM YOUR ORIGINAL) ===== */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f5f5f5; 
+    font-family: 'Inter', sans-serif;
+    
+}
+
+/* Add this at the top of your CSS */
+.form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-header {
+    width: 80%;
+    max-width: 1000px;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+/* Modify these existing rules */
+#root, .app-container {
+    width: 70%;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+.form-container {
+    border: 1px solid black;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 1000px; 
+    padding: 20px; 
+    box-sizing: border-box; 
+    background: white;
+    margin: 0 auto; /* This centers the container */
+}
+.type-name { width: 50%; }
+.description { width: 100%; }
+.epic-name { width: 100%; }
+.date { width: 50%; }
+.status-priority { width: 50%; }
+.time-assignee { width: 50%; }
+.label-sprint-parent { width: 50%; }
+
+.form-subcontainer {
+    display: flex;
+    width: 100%;
+    gap: 20px; 
+    padding: 10px; 
+    box-sizing: border-box; 
+}
+
+.box {
+    width: 100%;
+    padding: 15px; 
+    border: 1px solid #ddd; 
+    box-sizing: border-box; 
+    border-radius: 4px;
+}
+
+.button {
+    width: 30%;
+    padding: 15px;
+    background: #2da5fa;
+    border-color: transparent;
+    border-radius: 6px;
+    color: white;
+
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    
+}
+
+.title {
+    margin-bottom: 3px;
+}
+
+/* ===== LARGE SCREEN ADJUSTMENTS ===== */
+@media (min-width: 1600px) {
+    /* Scale up container proportionally */
+    .form-container {
+        max-width: 1200px;
+        padding: 30px;
+        border-radius: 8px;
+    }
+    
+    /* Scale up padding and gaps proportionally */
+    .form-subcontainer {
+        gap: 30px;
+        padding: 15px;
+    }
+    
+    .box {
+        padding: 20px;
+        border-radius: 6px;
+    }
+    
+    .button {
+        padding: 18px;
+        border-radius: 8px;
+    }
+    
+    /* Scale up font sizes slightly */
+    body {
+        font-size: 17px;
+    }
+    
+    .title {
+        font-size: 1.05em;
+    }
+}
+
+@media (min-width: 2000px) {
+    /* Further scale for very large monitors */
+    .form-container {
+        max-width: 1400px;
+        padding: 40px;
+    }
+    
+    .form-subcontainer {
+        gap: 40px;
+    }
+    
+    .box {
+        padding: 25px;
+    }
+    
+    body {
+        font-size: 18px;
+    }
+}
+
+/* ===== MOBILE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+    /* Stack all elements vertically */
+    .form-subcontainer {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    /* Make all boxes full width */
+    .type-name,
+    .date,
+    .status-priority,
+    .time-assignee,
+    .label-sprint-parent {
+        width: 100%;
+    }
+    
+    /* Make button full width on mobile */
+    .button {
+        width: 100%;
+        ;
+    }
+    
+    /* Adjust padding for mobile */
+    .box {
+        padding: 12px;
+    }
+}

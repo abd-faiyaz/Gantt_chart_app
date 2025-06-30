@@ -1,0 +1,180 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.task-card {
+  border: 1px solid black;
+  width: 80%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  border-bottom: 1px solid blue;
+  border-right: 1px solid blue;
+  border-top: transparent;
+  border-left: transparent;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.task-title h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.assignee-estimation, 
+.date,
+.task-profile {
+  display: flex;
+  gap: 20px;
+  width:100%
+}
+
+.secton-title{
+    font-weight: bold;
+    margin-right: 2px;
+}
+.content
+{
+    color: gray;
+}
+
+
+.assignee,.estimation,.start-date,.end-date{
+    display: flex;
+    width:50%;
+
+}
+
+.line {
+  height: 1px;
+  background: #ccc;
+  width: 100%;
+}
+
+.button-container {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    white-space: nowrap;
+}
+
+/* Table row hover effect */
+tr {
+    transition: background 0.2s;
+}
+tr:hover {
+    background: #f5f7fa;
+}
+
+/* Table cell styling */
+td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+/* Button styling */
+.button-list {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    margin: 0 2px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+    width:40%
+}
+.button:hover {
+    background: #1565c0;
+}
+
+/* Status badge styling */
+.status-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    background: #e0e0e0;
+}
+.status-todo { background: #f4f5f7; color: #333; }
+.status-inprogress { background: #e6f4ff; color: #1976d2; }
+.status-done { background: #e6ffe6; color: #388e3c; }
+
+/* Assignee avatar styling */
+.assignee-avatar {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #1976d2;
+    color: #fff;
+    text-align: center;
+    line-height: 28px;
+    font-weight: bold;
+    margin-right: 6px;
+    font-size: 14px;
+    vertical-align: middle;
+}
+.assignee-name {
+    vertical-align: middle;
+    font-weight: 500;
+}
+
+/* Type icon styling */
+.type-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    vertical-align: middle;
+}
+
+.type-icon .icon {
+    font-size: 16px;
+    display: inline-block;
+}
+
+.type-icon .label {
+    font-size: 14px;
+}
+
+.type-icon.bug { color: #e74c3c; }
+.type-icon.story { color: #8e44ad; }
+
+/* Date columns styling for flat list view */
+.date-columns {
+  white-space: nowrap;
+  min-width: 220px;
+  padding: 8px 12px !important;
+  width: 220px;
+}
+
+/* Individual date column styling */
+.date-column {
+  white-space: nowrap;
+  min-width: 110px;
+  padding: 8px 12px !important;
+  width: 110px;
+  text-align: center;
+}
+
+/* Assignee column styling */
+.assignee-column {
+  min-width: 150px;
+  padding: 8px 12px !important;
+}

@@ -1,0 +1,330 @@
+/* Hierarchical Task Table Styles */
+.hierarchical-task-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.hierarchical-loading,
+.hierarchical-empty {
+  padding: 40px;
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Expand/Collapse Column */
+.expand-column {
+  width: 40px;
+  padding: 8px !important;
+  text-align: center;
+}
+
+.expand-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #64748b;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.expand-button:hover {
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+.expand-button.expanded {
+  color: #3b82f6;
+}
+
+/* Row Types and Indentation */
+.epic-row {
+  background-color: #fefefe;
+  border-left: 4px solid #8b5cf6;
+}
+
+.epic-row:hover {
+  background-color: #faf5ff;
+}
+
+.task-row {
+  background-color: #fdfdfd;
+}
+
+.task-row.level-1 {
+  border-left: 4px solid #3b82f6;
+}
+
+.task-row.level-1:hover {
+  background-color: #eff6ff;
+}
+
+.subtask-row {
+  background-color: #fcfcfc;
+}
+
+.subtask-row.level-2 {
+  border-left: 4px solid #10b981;
+}
+
+.subtask-row.level-2:hover {
+  background-color: #f0fdf4;
+}
+
+.subtask-row.level-3 {
+  border-left: 4px solid #f59e0b;
+}
+
+.subtask-row.level-3:hover {
+  background-color: #fffbeb;
+}
+
+/* Title Indentation */
+.epic-title {
+  font-weight: 600;
+  color: #6d28d9;
+}
+
+.task-title.level-1 {
+  padding-left: 20px;
+  font-weight: 500;
+  color: #1e40af;
+}
+
+.task-title.level-2 {
+  padding-left: 40px;
+  color: #059669;
+}
+
+.subtask-title.level-2 {
+  padding-left: 40px;
+  color: #047857;
+}
+
+.subtask-title.level-3 {
+  padding-left: 60px;
+  color: #d97706;
+}
+
+/* Title with action button alignment */
+.title-with-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* Date columns styling */
+.date-columns {
+  white-space: nowrap;
+  min-width: 220px;
+  padding: 8px 12px !important;
+  width: 220px;
+}
+
+/* Individual date column styling */
+.date-column {
+  white-space: nowrap;
+  min-width: 110px;
+  padding: 8px 12px !important;
+  width: 110px;
+  text-align: center;
+}
+
+/* Type Badges */
+.type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.epic-badge {
+  background-color: #e0e7ff;
+  color: #6d28d9;
+}
+
+.story-badge {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.task-badge {
+  background-color: #dcfce7;
+  color: #059669;
+}
+
+.sub_task-badge,
+.subtask-badge {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+/* Loading and Empty States */
+.loading-row,
+.empty-row {
+  background-color: #f8fafc;
+}
+
+.loading-cell,
+.empty-cell {
+  text-align: center;
+  padding: 20px;
+  color: #64748b;
+  font-style: italic;
+}
+
+.loading-cell {
+  color: #3b82f6;
+}
+
+/* Button Styles */
+.button-container {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.button-list {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-btn {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.edit-btn:hover {
+  background-color: #bae6fd;
+}
+
+.delete-btn {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.delete-btn:hover {
+  background-color: #fecaca;
+}
+
+/* Add Task and Add Subtask Buttons */
+.add-task-btn,
+.add-subtask-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+}
+
+.add-task-btn:hover,
+.add-subtask-btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.add-subtask-btn {
+  background: #059669;
+  font-size: 12px;
+  min-width: 20px;
+  height: 20px;
+}
+
+.add-subtask-btn:hover {
+  background: #047857;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hierarchical-task-table {
+    font-size: 12px;
+  }
+  
+  .expand-column {
+    width: 30px;
+  }
+  
+  .expand-button {
+    font-size: 12px;
+    padding: 2px 4px;
+  }
+  
+  .task-title.level-1 {
+    padding-left: 15px;
+  }
+  
+  .subtask-title.level-2 {
+    padding-left: 30px;
+  }
+  
+  .subtask-title.level-3 {
+    padding-left: 45px;
+  }
+}
+
+/* Animation for expand/collapse */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.task-row,
+.subtask-row {
+  animation: slideDown 0.2s ease-out;
+}
+
+/* Hover effects for better UX */
+.expand-button,
+.button-list {
+  transition: all 0.15s ease-in-out;
+}
+
+.epic-row,
+.task-row,
+.subtask-row {
+  transition: background-color 0.15s ease-in-out;
+}
+
+/* Type icon styling for hierarchical view */
+.type-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+.type-icon .icon {
+  font-size: 16px;
+  display: inline-block;
+}
+
+.type-icon .label {
+  font-size: 14px;
+}

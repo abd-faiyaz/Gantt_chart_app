@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    build:
+      context: database
+      dockerfile: Dockerfile
+    container_name: gantt-postgres
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - gantt_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Spring Boot Backend
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/backend/Dockerfile
+    container_name: gantt-backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - SHOW_SQL=${SHOW_SQL:-false}
+      - FORMAT_SQL=${FORMAT_SQL:-false}
+      - SQL_LOGGING_LEVEL=${SQL_LOGGING_LEVEL:-WARN}
+      - SQL_PARAM_LOGGING=${SQL_PARAM_LOGGING:-WARN}
+    volumes:
+      - ./backend/application-docker.properties:/app/application-docker.properties:ro
+    networks:
+      - gantt_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # React Frontend with Nginx
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/frontend/Dockerfile
+      args:
+        - REACT_APP_API_URL=${REACT_APP_API_URL:-}
+    container_name: gantt-frontend
+    ports:
+      - "${FRONTEND_EXTERNAL_PORT:-80}:80"
+    environment:
+      - NGINX_HOST=${FRONTEND_HOST:-localhost}
+      - NGINX_PORT=80
+    networks:
+      - gantt_network
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/frontend-health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  gantt_network:
+    driver: bridge
