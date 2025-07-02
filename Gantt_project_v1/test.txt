@@ -6,5 +6,5 @@ Create project button
 Dadu tasks:
 1) login and authentication handling using Clerk / dadur api
 2) task level er 3ta (WBS maane shift left shift right ta)
-3)Card style project view (user dashboard screen ee )
+3) Card style project view (user dashboard screen ee )
 4) implement user assignment using dropdown menu

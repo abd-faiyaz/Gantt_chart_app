@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import useDateCalculation from "../hooks/useDateCalculation";
 import HolidayCalendar from "../components/HolidayCalendar";
+import CreatableMultiSelect from "../components/CreatableMultiSelect";
+import MultiSelectAssignee from "../components/MultiSelectAssignee";
 import "./TaskForm.css"
 
 const TaskForm = () => {
@@ -17,6 +19,8 @@ const TaskForm = () => {
     const [startDate, setStartDate] = useState('');
     const [estimateDays, setEstimateDays] = useState('');
     const [endDateValue, setEndDateValue] = useState('');
+    const [selectedLabels, setSelectedLabels] = useState([]);
+    const [selectedAssignees, setSelectedAssignees] = useState([]);
 
     // Determine if we're creating a task under a specific epic
     const isUnderSpecificEpic = Boolean(epicId);
@@ -135,6 +139,19 @@ const TaskForm = () => {
             setEndDateValue(endDateVal);
             setEstimateDays(estimateVal);
             
+            // Handle labels for multi-select
+            const labelsArray = task.labels ? 
+                (Array.isArray(task.labels) ? task.labels : task.labels.split(',').map(l => l.trim())) : 
+                [];
+            setSelectedLabels(labelsArray);
+            
+            // Handle assignees for multi-select
+            const assigneesArray = task.assigneeIds ? 
+                (Array.isArray(task.assigneeIds) ? task.assigneeIds : [task.assigneeIds]) :
+                task.assigneeId ? [task.assigneeId] :
+                task.assignee ? [task.assignee] : [];
+            setSelectedAssignees(assigneesArray);
+            
             reset({
                 type: task.type ? task.type.toLowerCase() : "",
                 title: task.title || "",
@@ -243,13 +260,15 @@ const TaskForm = () => {
             priority: data.priority, // Task priority
             // Convert estimate to PostgreSQL INTERVAL format if provided (days instead of hours)
             originalEstimate: data.estimate ? `P${data.estimate}D` : null,
-            // Set assignee and epic based on form data
-            assigneeId: data.assignee || null,
+            // Use selected assignees array (multiple assignees support)
+            assigneeIds: selectedAssignees.length > 0 ? selectedAssignees : null,
+            // For backward compatibility, also send single assignee
+            assigneeId: selectedAssignees.length > 0 ? selectedAssignees[0] : null,
             epicId: data.linkedEpic || (isUnderSpecificEpic && selectedEpic ? (selectedEpic.id || selectedEpic.epicId) : null),
             sprintId: null,
             parentTaskId: null,
-            // Split labels by comma, trim whitespace, filter out empty strings
-            labels: data.labels ? data.labels.split(',').map(l => l.trim()).filter(l => l.length > 0) : null
+            // Use selected labels array instead of splitting comma-separated string
+            labels: selectedLabels.length > 0 ? selectedLabels : null
         };
 
         // Log the payload for debugging
@@ -516,39 +535,26 @@ const TaskForm = () => {
                             />
                             {errors.estimate && <span className="text-red-500 text-sm">{errors.estimate.message}</span>}
                         </div>
-                        <div className="time-assignee">
-                            <div className="title">
-                            <label className="block text-sm font-medium text-gray-700">Assignee</label>
-
-                            </div>
-                            <select
-                                {...register("assignee")}
-                                className="box"
-                            >
-                                <option value="">Select assignee</option>
-                                {users.map((user) => (
-                                    <option key={user.id} value={user.id}>
-                                        {user.fullName} ({user.username})
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+                        <MultiSelectAssignee
+                            label="Assignees"
+                            value={selectedAssignees}
+                            onChange={setSelectedAssignees}
+                            users={users}
+                            className="time-assignee"
+                            placeholder="Select assignees..."
+                            isMulti={true}
+                        />
 
                     </div>
 
                     <div className="form-subcontainer">
-                        {/* Labels/Tags */}
-                        <div className="labels-sprint-parent">
-                            <div className="title">
-                            <label className="block text-sm font-medium text-gray-700">Labels</label>
-
-                            </div>
-                            <input
-                                {...register("labels")}
-                                className="box"
-                                placeholder="tag1, tag2, tag3"
-                            />
-                        </div>
+                        <CreatableMultiSelect
+                            label="Labels"
+                            value={selectedLabels}
+                            onChange={setSelectedLabels}
+                            className="labels-sprint-parent"
+                            placeholder="Select or create labels..."
+                        />
                     </div>
 
                     <div className="form-subcontainer">

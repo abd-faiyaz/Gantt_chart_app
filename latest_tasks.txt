@@ -7,10 +7,10 @@
 Allow assigning multiple users to a task.
 
 
-Implement a dropdown for selecting assignees.
 
 
-The end date automatically calculation
+
+
 
 
 Replace the flat filter with a parameter-based filtering system.
@@ -34,7 +34,7 @@ Implement user authentication.
 Only assigned users (by admin) can view their respective projects.
 
 
-Assign users to projects.
+
 
 Use a card-style layout for each project.
 
@@ -45,7 +45,7 @@ Display the project list as the landing page.
 Tasks should be created and managed under the appropriate sprint.
 
 
-Implement a "Create Project" feature.
+
 
 
 Allow users to create sprints under each project.
@@ -55,4 +55,42 @@ Allow users to create sprints under each project.
 1.task sequencing
 2. react prime naile material UI integration
 3. epics create er problem fixing
-4.
+4. 
+
+//////////////////////////////////////////////////////////////////////////
+Project er card er vitore jaate epics and underlying tasks chole ashe
+hierarchical view ta full remove, just Projects aar flat list thakbe
+
+user er sathe project er association. An user can be assigned to multiple projects. 
+Tell me how you will modify the users table to implement this, dont give codes yet
+
+
+Create subtask page er fixes ja ja lagbe:
+1) Assignee te dropdown tay oi task er under ee je je user chilo just taader dekhabo
+    instead of showing all users 
+2) End date er auto calculation which is performed in the create task and create epic 
+pages, is absent here
+3) subtask er handling tai database ee missing, 2 ways to resolve this:
+    -  new subtask table jeikhane each subtask must correspond to an existing task by id 
+
+Create epic page er fixes:
+1) In the linked epic name field, inside the dropdown menu, dont list all the epics. 
+Rather list all the epics which are part of the project. Suppose project 1 has 4 epics 
+and i want to create a 5th epic, so in the Linked epic name field's dropdown, i should see 
+the 4 epics of that project only. 
+2) for the box "Project", keep it locked to the project we are currently creating the 
+epic inside. For example if i try to create a new epic inside project called P1, in the 
+project box in create epic page, the value P1 will be fixed and greyed out, i.e. user cant 
+change that
+3) In the assignees box dropdown menu, show only the users that are assigned to this project
+for which we are creating the epic, instead of listing all the users 
+
+Create tasks page er fixes:
+1) In the assignees box dropdown menu, show only the users that are assigned to the epic for which 
+we are creating the task, instead of listing all the users 
+
+/////////////////////////////////////////////////////////////////////////////
+hierarchy level er nicher jinishpatir:
+1) start date >= project er start date
+2) end date <= project end date. 
+3) 

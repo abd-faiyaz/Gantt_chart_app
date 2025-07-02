@@ -3,9 +3,14 @@ package com.ontik.gantt_project_v1.model;
 import jakarta.persistence.*;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.UUID;
 
 /**
@@ -18,7 +23,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class User implements UserDetails {
 
     @Id
     @Column(name = "user_id", nullable = false)
@@ -33,6 +38,7 @@ public class User {
     private String email;
 
     @Column(name = "password_hash", nullable = false, length = 255)
+    @JsonIgnore // Don't expose password in JSON responses
     private String passwordHash;
 
     @Column(name = "first_name", nullable = false, length = 100)
@@ -75,5 +81,53 @@ public class User {
     // Helper method to get full name
     public String getFullName() {
         return (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "");
+    }
+    
+    // UserDetails implementation for Spring Security
+    @Override
+    @JsonIgnore
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.emptyList(); // No roles for now
+    }
+    
+    @Override
+    @JsonIgnore
+    public String getPassword() {
+        return passwordHash;
+    }
+    
+    @Override
+    public String getUsername() {
+        return email; // Use email as username
+    }
+    
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+    
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+    
+    @Override
+    @JsonIgnore
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+    
+    @Override
+    @JsonIgnore
+    public boolean isEnabled() {
+        return isActive != null && isActive;
+    }
+    
+    // Custom method to get display name for frontend
+    @JsonProperty("name")
+    public String getDisplayName() {
+        return getFullName().trim().isEmpty() ? username : getFullName();
     }
 }

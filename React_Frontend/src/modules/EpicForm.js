@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import useDateCalculation from "../hooks/useDateCalculation";
 import HolidayCalendar from "../components/HolidayCalendar";
+import CreatableMultiSelect from "../components/CreatableMultiSelect";
+import MultiSelectAssignee from "../components/MultiSelectAssignee";
 import "./TaskForm.css"
 
 const EpicForm = () => {
@@ -16,6 +18,8 @@ const EpicForm = () => {
     const [startDate, setStartDate] = useState('');
     const [estimateDays, setEstimateDays] = useState('');
     const [endDateValue, setEndDateValue] = useState('');
+    const [selectedLabels, setSelectedLabels] = useState([]);
+    const [selectedAssignees, setSelectedAssignees] = useState([]);
 
     // Use the date calculation hook
     const {
@@ -123,6 +127,22 @@ const EpicForm = () => {
             setEndDateValue(endDateVal);
             setEstimateDays(estimateVal);
             
+            // Handle labels for multi-select
+            const labelsArray = epic.tags ? 
+                (Array.isArray(epic.tags) ? epic.tags : epic.tags.split(',').map(l => l.trim())) : 
+                epic.labels ? 
+                (Array.isArray(epic.labels) ? epic.labels : epic.labels.split(',').map(l => l.trim())) : 
+                [];
+            setSelectedLabels(labelsArray);
+            
+            // Handle assignees for multi-select
+            const assigneesArray = epic.assignedToIds ? 
+                (Array.isArray(epic.assignedToIds) ? epic.assignedToIds : [epic.assignedToIds]) :
+                epic.assignedTo ? [epic.assignedTo] :
+                epic.assignee ? [epic.assignee] :
+                epic.assigneeId ? [epic.assigneeId] : [];
+            setSelectedAssignees(assigneesArray);
+            
             reset({
                 title: epic.title || "",
                 description: epic.description || epic.task_description || "",
@@ -198,9 +218,10 @@ const EpicForm = () => {
             status: data.status,
             priority: data.priority,
             // Note: Epic entity doesn't have originalEstimate field, omitting it
-            assignedTo: data.assignee && data.assignee !== "" ? data.assignee : null, // Epic entity uses 'assignedTo', UUID or null
+            assignedToIds: selectedAssignees.length > 0 ? selectedAssignees : null, // Epic multi-assignee support
+            assignedTo: selectedAssignees.length > 0 ? selectedAssignees[0] : null, // For backward compatibility
             parentEpicId: data.linkedEpic || null, // Epic entity uses 'parentEpicId', not 'linkedEpicId'
-            tags: data.labels ? data.labels.split(',').map(l => l.trim()).filter(l => l.length > 0) : null, // Epic entity uses 'tags', not 'labels'
+            tags: selectedLabels.length > 0 ? selectedLabels : null, // Epic entity uses 'tags', not 'labels'
             projectId: data.projectId // Use selected project ID from dropdown
         };
 
@@ -427,35 +448,25 @@ const EpicForm = () => {
                             {errors.estimate && <span className="text-red-500 text-sm">{errors.estimate.message}</span>}
                         </div>
 
-                        <div className="time-assignee">
-                            <div className="title">
-                                <label className="block text-sm font-medium text-gray-700">Assignee</label>
-                            </div>
-                            <select
-                                {...register("assignee")}
-                                className="box"
-                            >
-                                <option value="">Select assignee (optional)</option>
-                                {allUsers.map((user) => (
-                                    <option key={user.id} value={user.id}>
-                                        {user.fullName} ({user.username})
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+                        <MultiSelectAssignee
+                            label="Assignees"
+                            value={selectedAssignees}
+                            onChange={setSelectedAssignees}
+                            users={allUsers}
+                            className="time-assignee"
+                            placeholder="Select assignees (optional)..."
+                            isMulti={true}
+                        />
                     </div>
 
                     <div className="form-subcontainer">
-                        <div className="labels-sprint-parent">
-                            <div className="title">
-                                <label className="block text-sm font-medium text-gray-700">Labels</label>
-                            </div>
-                            <input
-                                {...register("labels")}
-                                className="box"
-                                placeholder="tag1, tag2, tag3"
-                            />
-                        </div>
+                        <CreatableMultiSelect
+                            label="Labels"
+                            value={selectedLabels}
+                            onChange={setSelectedLabels}
+                            className="labels-sprint-parent"
+                            placeholder="Select or create labels..."
+                        />
                     </div>
 
                     <div className="form-subcontainer">

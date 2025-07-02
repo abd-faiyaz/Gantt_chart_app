@@ -2,17 +2,25 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TaskCard from "../components/TaskList";
 import HierarchicalTaskTable from "../components/HierarchicalTaskTable";
+import HierarchicalProjectView from "../components/HierarchicalProjectView";
 import "./TaskView.css";
 import Filter from "../components/Filter";
+import { useAuth } from "../context/AuthContext";
 
 const TaskView = () => {
   const [tasks, setTasks] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [activeFilters, setActiveFilters] = useState(null);
-  const [viewMode, setViewMode] = useState('hierarchical'); // 'hierarchical' or 'flat'
+  const [viewMode, setViewMode] = useState('projects'); // 'projects', 'hierarchical' or 'flat'
   const [refreshTrigger, setRefreshTrigger] = useState(0); // Add refresh trigger for hierarchical view
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/auth');
+  };
 
   useEffect(() => {
     fetchTasks();
@@ -90,6 +98,63 @@ const TaskView = () => {
     navigate("/add-epic");
   };
 
+  const handleAddProject = () => {
+    navigate("/add-project");
+  };
+
+  const handleDeleteItem = async (item, type) => {
+    console.log(`Deleting ${type}:`, item);
+    
+    try {
+      let endpoint;
+      let itemId;
+      
+      switch (type) {
+        case 'project':
+          itemId = item.projectId || item.id;
+          endpoint = `/projects/${itemId}`;
+          break;
+        case 'epic':
+          itemId = item.epicId || item.id;
+          endpoint = `/epics/${itemId}`;
+          break;
+        case 'task':
+        case 'subtask':
+          itemId = item.taskId || item.id;
+          endpoint = `/tasks/${itemId}`;
+          break;
+        default:
+          throw new Error(`Unknown item type: ${type}`);
+      }
+      
+      console.log(`Deleting ${type} with ID:`, itemId);
+      
+      const response = await fetch(endpoint, {
+        method: "DELETE"
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to delete ${type}: ${errorText}`);
+      }
+      
+      console.log(`${type} deleted successfully`);
+      
+      // Refresh data after successful deletion
+      if (viewMode === 'flat') {
+        fetchTasks(activeFilters);
+      }
+      
+      // Trigger refresh for hierarchical views
+      setRefreshTrigger(prev => prev + 1);
+      
+      alert(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully!`);
+    } catch (error) {
+      console.error(`Error deleting ${type}:`, error);
+      alert(`Failed to delete ${type}: ${error.message}`);
+    }
+  };
+
   const handleDeleteClick = (task) => {
     setTaskToDelete(task);
     setShowConfirm(true);
@@ -152,9 +217,18 @@ const TaskView = () => {
   return (
     <div className="modern-task-view">
       <div className="task-view-header">
-        <h2>Task Management</h2>
+        <div className="header-left">
+          <h2>Task Management</h2>
+          <span className="welcome-text">Welcome, {user?.name || user?.email || 'User'}</span>
+        </div>
         <div className="header-controls">
           <div className="view-toggle">
+            <button 
+              className={`toggle-btn ${viewMode === 'projects' ? 'active' : ''}`}
+              onClick={() => setViewMode('projects')}
+            >
+              🗂️ Projects
+            </button>
             <button 
               className={`toggle-btn ${viewMode === 'hierarchical' ? 'active' : ''}`}
               onClick={() => setViewMode('hierarchical')}
@@ -168,8 +242,25 @@ const TaskView = () => {
               📋 Flat List
             </button>
           </div>
-          <button className="modern-create-btn" onClick={viewMode === 'hierarchical' ? handleAddEpic : handleAddTask}>
-            <span className="plus-icon">+</span> {viewMode === 'hierarchical' ? 'Create Epic' : 'Create Task'}
+          <button 
+            className="modern-create-btn" 
+            onClick={
+              viewMode === 'projects' ? handleAddProject :
+              viewMode === 'hierarchical' ? handleAddEpic : 
+              handleAddTask
+            }
+          >
+            <span className="plus-icon">+</span> 
+            {viewMode === 'projects' ? 'Create Project' : 
+             viewMode === 'hierarchical' ? 'Create Epic' : 
+             'Create Task'}
+          </button>
+          <button 
+            className="logout-btn" 
+            onClick={handleLogout}
+            title="Logout"
+          >
+            🚪 Logout
           </button>
         </div>
       </div>
@@ -179,7 +270,12 @@ const TaskView = () => {
       </div>
 
       <div className="modern-table-container">
-        {viewMode === 'hierarchical' ? (
+        {viewMode === 'projects' ? (
+          <HierarchicalProjectView 
+            refreshTrigger={refreshTrigger}
+            onDeleteItem={handleDeleteItem}
+          />
+        ) : viewMode === 'hierarchical' ? (
           <HierarchicalTaskTable 
             tasks={tasks} 
             onDeleteTask={handleDeleteClick}
