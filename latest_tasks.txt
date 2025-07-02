@@ -1,0 +1,58 @@
+
+
+
+
+
+
+Allow assigning multiple users to a task.
+
+
+Implement a dropdown for selecting assignees.
+
+
+The end date automatically calculation
+
+
+Replace the flat filter with a parameter-based filtering system.
+
+
+Enable WBS reordering.
+
+
+Allow drag-and-drop functionality to reorganize task levels.
+
+
+Use hierarchical numbering (e.g., 1 for parent, 1.1 for child, 1.1.1 for sub-task).
+
+
+Add a WBS column to the task list.
+
+
+Implement user authentication.
+
+
+Only assigned users (by admin) can view their respective projects.
+
+
+Assign users to projects.
+
+Use a card-style layout for each project.
+
+
+Display the project list as the landing page.
+
+
+Tasks should be created and managed under the appropriate sprint.
+
+
+Implement a "Create Project" feature.
+
+
+Allow users to create sprints under each project.
+
+////////////////////////////////////////////////////////////////////////
+
+1.task sequencing
+2. react prime naile material UI integration
+3. epics create er problem fixing
+4.

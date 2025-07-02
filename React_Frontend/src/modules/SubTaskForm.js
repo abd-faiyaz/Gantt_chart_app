@@ -12,6 +12,7 @@ const SubTaskForm = () => {
     const subtask = location.state?.subtask; // get subtask if passed for editing
 
     const [parentTask, setParentTask] = useState(null);
+    const [users, setUsers] = useState([]);
     const [startDate, setStartDate] = useState('');
     const [estimateDays, setEstimateDays] = useState('');
     const [endDateValue, setEndDateValue] = useState('');
@@ -47,6 +48,24 @@ const SubTaskForm = () => {
             fetchParentTask();
         }
     }, [taskId, navigate]);
+
+    // Fetch users for assignee dropdown
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch("/users");
+                if (!response.ok) throw new Error("Failed to fetch users");
+                const userData = await response.json();
+                // Filter only active users
+                const activeUsers = userData.filter(user => user.isActive || user.is_active);
+                setUsers(activeUsers);
+            } catch (error) {
+                console.error("Error fetching users:", error);
+                setUsers([]);
+            }
+        };
+        fetchUsers();
+    }, []);
 
     const {
         register,
@@ -110,6 +129,15 @@ const SubTaskForm = () => {
             calculateEndDate(startDate, estimateDays);
         }
     }, [startDate, estimateDays, calculateEndDate]);
+
+    // Automatically set end date when calculated end date changes
+    useEffect(() => {
+        if (calculatedEndDate) {
+            console.log('SubTaskForm: Setting end date automatically to:', calculatedEndDate);
+            setEndDateValue(calculatedEndDate);
+            setValue("endDate", calculatedEndDate, { shouldValidate: true });
+        }
+    }, [calculatedEndDate, setValue]);
 
     // Sync state changes with form values
     useEffect(() => {
@@ -283,36 +311,26 @@ const SubTaskForm = () => {
                             <div className="title">
                                 <label className="block text-sm font-medium text-gray-700">End Date/Due Date</label>
                             </div>
-                            <HolidayCalendar
-                                value={endDateValue}
-                                onChange={(date) => {
-                                    setEndDateValue(date);
-                                    setValue("endDate", date, { shouldValidate: true });
-                                    if (startDate && estimateDays && date) {
-                                        validateEndDate(startDate, estimateDays, date);
-                                    }
-                                }}
-                                holidays={holidays}
-                                minDate={calculatedEndDate}
-                                shouldDisableDate={(date) => {
-                                    if (calculatedEndDate && new Date(date) < new Date(calculatedEndDate)) {
-                                        return true;
-                                    }
-                                    return shouldDisableDate ? shouldDisableDate(date) : false;
-                                }}
-                                getDateClassName={getDateClassName}
-                                getHolidayInfo={getHolidayInfo}
-                                placeholder={calculatedEndDate ? `Suggested: ${calculatedEndDate}` : "Select end date"}
+                            <input
+                                type="text"
+                                value={endDateValue || calculatedEndDate || 'Not calculated'}
+                                readOnly
                                 className="box"
+                                style={{
+                                    backgroundColor: '#f3f4f6',
+                                    color: '#6b7280',
+                                    cursor: 'not-allowed'
+                                }}
+                                placeholder="End date will be calculated automatically"
                             />
                             <input
                                 type="hidden"
                                 {...register("endDate")}
-                                value={endDateValue || ''}
+                                value={endDateValue || calculatedEndDate || ''}
                             />
                             {calculatedEndDate && (
-                                <div className="text-sm text-gray-600 mt-1">
-                                    {isCalculating ? 'Calculating...' : `Suggested end date: ${calculatedEndDate}`}
+                                <div className="text-sm text-green-600 mt-1">
+                                    {isCalculating ? 'Calculating...' : `Automatically calculated based on start date and estimate`}
                                 </div>
                             )}
                             {validationMessage && (
@@ -377,11 +395,17 @@ const SubTaskForm = () => {
                             <div className="title">
                                 <label className="block text-sm font-medium text-gray-700">Assignee</label>
                             </div>
-                            <input
+                            <select
                                 {...register("assignee")}
                                 className="box"
-                                placeholder="Enter assignee name"
-                            />
+                            >
+                                <option value="">Select assignee</option>
+                                {users.map((user) => (
+                                    <option key={user.id} value={user.id}>
+                                        {user.fullName} ({user.username})
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 

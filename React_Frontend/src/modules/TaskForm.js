@@ -13,6 +13,7 @@ const TaskForm = () => {
 
     const [allEpics, setAllEpics] = useState([]);
     const [selectedEpic, setSelectedEpic] = useState(null);
+    const [users, setUsers] = useState([]);
     const [startDate, setStartDate] = useState('');
     const [estimateDays, setEstimateDays] = useState('');
     const [endDateValue, setEndDateValue] = useState('');
@@ -67,6 +68,24 @@ const TaskForm = () => {
         };
         fetchEpics();
     }, [isUnderSpecificEpic, epicId]);
+
+    // Fetch users for assignee dropdown
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch("/users");
+                if (!response.ok) throw new Error("Failed to fetch users");
+                const userData = await response.json();
+                // Filter only active users
+                const activeUsers = userData.filter(user => user.isActive || user.is_active);
+                setUsers(activeUsers);
+            } catch (error) {
+                console.error("Error fetching users:", error);
+                setUsers([]);
+            }
+        };
+        fetchUsers();
+    }, []);
 
     const {
         register,
@@ -145,6 +164,15 @@ const TaskForm = () => {
             calculateEndDate(startDate, parseInt(estimateDays));
         }
     }, [startDate, estimateDays, calculateEndDate]);
+
+    // Automatically set end date when calculated end date changes
+    useEffect(() => {
+        if (calculatedEndDate) {
+            console.log('TaskForm: Setting end date automatically to:', calculatedEndDate);
+            setEndDateValue(calculatedEndDate);
+            setValue("endDate", calculatedEndDate, { shouldValidate: true });
+        }
+    }, [calculatedEndDate, setValue]);
 
     // Sync state changes with form values
     useEffect(() => {
@@ -400,46 +428,29 @@ const TaskForm = () => {
                                 <div className="title">
                                 <label className="block text-sm font-medium text-gray-700">End Date/Due Date</label>
                                 </div>
-                                <HolidayCalendar
-                                    value={endDateValue}
-                                    onChange={(date) => {
-                                        setEndDateValue(date);
-                                        // Update the form field using setValue
-                                        setValue("endDate", date, { shouldValidate: true });
-                                        // Validate the selected end date
-                                        if (startDate && estimateDays && date) {
-                                            validateEndDate(startDate, parseInt(estimateDays), date);
-                                        }
-                                    }}
-                                    holidays={holidays}
-                                    minDate={calculatedEndDate} // Restrict to calculated date or later
-                                    shouldDisableDate={(date) => {
-                                        // Disable if before calculated end date
-                                        if (calculatedEndDate && new Date(date) < new Date(calculatedEndDate)) {
-                                            return true;
-                                        }
-                                        return shouldDisableDate ? shouldDisableDate(date) : false;
-                                    }}
-                                    getDateClassName={getDateClassName}
-                                    getHolidayInfo={getHolidayInfo}
-                                    placeholder={calculatedEndDate ? `Suggested: ${calculatedEndDate}` : "Select end date"}
+                                <input
+                                    type="text"
+                                    value={endDateValue || calculatedEndDate || 'Not calculated'}
+                                    readOnly
                                     className="box"
                                     style={{
-                                        backgroundColor: calculatedEndDate && !endDateValue ? '#f3f4f6' : 'white',
-                                        color: calculatedEndDate && !endDateValue ? '#6b7280' : 'black'
+                                        backgroundColor: '#f3f4f6',
+                                        color: '#6b7280',
+                                        cursor: 'not-allowed'
                                     }}
+                                    placeholder="End date will be calculated automatically"
                                 />
                                 {/* Hidden input for form validation */}
                                 <input
                                     type="hidden"
                                     {...register("endDate")}
-                                    value={endDateValue || ''}
+                                    value={endDateValue || calculatedEndDate || ''}
                                 />
-                                {/* {calculatedEndDate && (
-                                    <div className="text-sm text-gray-600 mt-1">
-                                        {isCalculating ? 'Calculating...' : `Suggested end date: ${calculatedEndDate}`}
+                                {calculatedEndDate && (
+                                    <div className="text-sm text-green-600 mt-1">
+                                        {isCalculating ? 'Calculating...' : `Automatically calculated based on start date and estimate`}
                                     </div>
-                                )} */}
+                                )}
                                 {validationMessage && (
                                     <div className="text-sm text-red-500 mt-1">{validationMessage}</div>
                                 )}
@@ -505,16 +516,22 @@ const TaskForm = () => {
                             />
                             {errors.estimate && <span className="text-red-500 text-sm">{errors.estimate.message}</span>}
                         </div>
-                        {/* Assignee */}
                         <div className="time-assignee">
                             <div className="title">
                             <label className="block text-sm font-medium text-gray-700">Assignee</label>
 
                             </div>
-                            <input
+                            <select
                                 {...register("assignee")}
                                 className="box"
-                            />
+                            >
+                                <option value="">Select assignee</option>
+                                {users.map((user) => (
+                                    <option key={user.id} value={user.id}>
+                                        {user.fullName} ({user.username})
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                     </div>

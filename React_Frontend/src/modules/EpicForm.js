@@ -11,6 +11,8 @@ const EpicForm = () => {
     const epic = location.state?.epic; // get epic if passed for editing
 
     const [allEpics, setAllEpics] = useState([]);
+    const [allUsers, setAllUsers] = useState([]);
+    const [allProjects, setAllProjects] = useState([]);
     const [startDate, setStartDate] = useState('');
     const [estimateDays, setEstimateDays] = useState('');
     const [endDateValue, setEndDateValue] = useState('');
@@ -42,6 +44,40 @@ const EpicForm = () => {
             }
         };
         fetchEpics();
+    }, []);
+
+    // Fetch all users for assignee dropdown
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch("/users");
+                if (!response.ok) throw new Error("Failed to fetch users");
+                const users = await response.json();
+                // Filter only active users
+                const activeUsers = users.filter(user => user.isActive || user.is_active);
+                setAllUsers(activeUsers);
+            } catch (error) {
+                console.error("Error fetching users:", error);
+                setAllUsers([]);
+            }
+        };
+        fetchUsers();
+    }, []);
+
+    // Fetch all projects for project dropdown
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const response = await fetch("/projects");
+                if (!response.ok) throw new Error("Failed to fetch projects");
+                const projects = await response.json();
+                setAllProjects(projects);
+            } catch (error) {
+                console.error("Error fetching projects:", error);
+                setAllProjects([]);
+            }
+        };
+        fetchProjects();
     }, []);
 
     const {
@@ -91,12 +127,13 @@ const EpicForm = () => {
                 title: epic.title || "",
                 description: epic.description || epic.task_description || "",
                 linkedEpic: epic.linkedEpicId || "",
+                projectId: epic.projectId || "",
                 startDate: startDateVal,
                 endDate: endDateVal,
                 status: epic.status || "",
                 priority: epic.priority || "",
                 estimate: estimateVal,
-                assignee: epic.assignee || epic.assigneeId || "",
+                assignee: epic.assignedTo || epic.assignee || epic.assigneeId || "",
                 labels: epic.labels ? epic.labels.join(', ') : "",
             });
         }
@@ -109,6 +146,15 @@ const EpicForm = () => {
             calculateEndDate(startDate, parseInt(estimateDays));
         }
     }, [startDate, estimateDays, calculateEndDate]);
+
+    // Automatically set end date when calculated end date changes
+    useEffect(() => {
+        if (calculatedEndDate) {
+            console.log('EpicForm: Setting end date automatically to:', calculatedEndDate);
+            setEndDateValue(calculatedEndDate);
+            setValue("endDate", calculatedEndDate, { shouldValidate: true });
+        }
+    }, [calculatedEndDate, setValue]);
 
     // Sync state changes with form values
     useEffect(() => {
@@ -138,6 +184,11 @@ const EpicForm = () => {
             return;
         }
 
+        if (!data.projectId) {
+            alert("Please select a project");
+            return;
+        }
+
         // Prepare the payload for epic creation
         const payload = {
             name: data.title, // Epic entity uses 'name' field, not 'title'
@@ -147,10 +198,10 @@ const EpicForm = () => {
             status: data.status,
             priority: data.priority,
             // Note: Epic entity doesn't have originalEstimate field, omitting it
-            assignedTo: data.assignee || null, // Epic entity uses 'assignedTo', not 'assigneeId'
+            assignedTo: data.assignee && data.assignee !== "" ? data.assignee : null, // Epic entity uses 'assignedTo', UUID or null
             parentEpicId: data.linkedEpic || null, // Epic entity uses 'parentEpicId', not 'linkedEpicId'
             tags: data.labels ? data.labels.split(',').map(l => l.trim()).filter(l => l.length > 0) : null, // Epic entity uses 'tags', not 'labels'
-            projectId: "00000000-0000-0000-0000-000000000001" // Temporary default project ID (required field)
+            projectId: data.projectId // Use selected project ID from dropdown
         };
 
         console.log("Sending epic payload:", payload);
@@ -238,6 +289,26 @@ const EpicForm = () => {
                     </div>
 
                     <div className="form-subcontainer">
+                        <div className="epic-name">
+                            <div className="title">
+                                <label className="block text-sm font-medium text-gray-700">Project *</label>
+                            </div>
+                            <select
+                                {...register("projectId", { required: "Project selection is required" })}
+                                className="box"
+                            >
+                                <option value="">Select project</option>
+                                {allProjects.map((project) => (
+                                    <option key={project.projectId} value={project.projectId}>
+                                        {project.projectName}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.projectId && <span className="text-red-500 text-sm">{errors.projectId.message}</span>}
+                        </div>
+                    </div>
+
+                    <div className="form-subcontainer">
                         <div className="date">
                             <div className="title">
                                 <label className="block text-sm font-medium text-gray-700">Start Date</label>
@@ -271,44 +342,28 @@ const EpicForm = () => {
                             <div className="title">
                                 <label className="block text-sm font-medium text-gray-700">End Date/Due Date</label>
                             </div>
-                            <HolidayCalendar
-                                value={endDateValue}
-                                onChange={(date) => {
-                                    console.log('EpicForm: End date changed to:', date);
-                                    setEndDateValue(date);
-                                    setValue("endDate", date, { shouldValidate: true });
-                                    if (startDate && estimateDays && date) {
-                                        console.log('EpicForm: Validating end date:', { startDate, estimateDays, date });
-                                        validateEndDate(startDate, parseInt(estimateDays), date);
-                                    }
-                                }}
-                                holidays={holidays}
-                                minDate={calculatedEndDate}
-                                shouldDisableDate={(date) => {
-                                    if (calculatedEndDate && new Date(date) < new Date(calculatedEndDate)) {
-                                        return true;
-                                    }
-                                    return shouldDisableDate ? shouldDisableDate(date) : false;
-                                }}
-                                getDateClassName={getDateClassName}
-                                getHolidayInfo={getHolidayInfo}
-                                placeholder={calculatedEndDate ? `Suggested: ${calculatedEndDate}` : "Select end date"}
+                            <input
+                                type="text"
+                                value={endDateValue || calculatedEndDate || 'Not calculated'}
+                                readOnly
                                 className="box"
                                 style={{
-                                    backgroundColor: calculatedEndDate && !endDateValue ? '#f3f4f6' : 'white',
-                                    color: calculatedEndDate && !endDateValue ? '#6b7280' : 'black'
+                                    backgroundColor: '#f3f4f6',
+                                    color: '#6b7280',
+                                    cursor: 'not-allowed'
                                 }}
+                                placeholder="End date will be calculated automatically"
                             />
                             <input
                                 type="hidden"
                                 {...register("endDate")}
-                                value={endDateValue || ''}
+                                value={endDateValue || calculatedEndDate || ''}
                             />
-                            {/* {calculatedEndDate && (
-                                <div className="text-sm text-gray-600 mt-1">
-                                    {isCalculating ? 'Calculating...' : `Suggested end date: ${calculatedEndDate}`}
+                            {calculatedEndDate && (
+                                <div className="text-sm text-green-600 mt-1">
+                                    {isCalculating ? 'Calculating...' : `Automatically calculated based on start date and estimate`}
                                 </div>
-                            )} */}
+                            )}
                             {validationMessage && (
                                 <div className="text-sm text-red-500 mt-1">{validationMessage}</div>
                             )}
@@ -376,11 +431,17 @@ const EpicForm = () => {
                             <div className="title">
                                 <label className="block text-sm font-medium text-gray-700">Assignee</label>
                             </div>
-                            <input
+                            <select
                                 {...register("assignee")}
                                 className="box"
-                                placeholder="Enter assignee name"
-                            />
+                            >
+                                <option value="">Select assignee (optional)</option>
+                                {allUsers.map((user) => (
+                                    <option key={user.id} value={user.id}>
+                                        {user.fullName} ({user.username})
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 
